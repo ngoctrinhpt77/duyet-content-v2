@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Nav from './nav';
 
 const BRANDS = ['Daikiosan', 'Makano', 'Daikio', 'Nakami', 'Takasa', 'Kasuto', 'Achisa'];
 const CHANNELS = [
@@ -16,6 +17,7 @@ type Review = {
   breakdown: Record<string, number>;
   decision: 'PASS' | 'MINOR_FIX' | 'MAJOR_FIX' | 'REWRITE';
   required_edits: string[]; summary: string;
+  saved?: boolean; db_error?: string;
 };
 
 const DECISIONS = {
@@ -59,9 +61,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="bg-[#0f2a5c] text-white px-6 py-4">
-        <h1 className="text-xl font-bold">MOS – Đại Việt <span className="font-normal text-blue-200">· Duyệt content bằng AI</span></h1>
-      </header>
+      <Nav />
 
       <main className="max-w-6xl mx-auto p-6 grid gap-6 lg:grid-cols-2">
         {/* Form nộp bài */}
@@ -129,6 +129,13 @@ export default function Home() {
               </div>
 
               <p className="text-sm text-slate-600">{result.summary}</p>
+
+              {result.saved === true && (
+                <p className="text-xs text-green-600">💾 Đã lưu vào hệ thống — xem ở tab “Hàng chờ duyệt”.</p>
+              )}
+              {result.saved === false && (
+                <p className="text-xs text-orange-500">⚠️ Chưa lưu được DB ({result.db_error ?? 'chưa chạy SQL setup'}) — kết quả vẫn dùng được.</p>
+              )}
 
               <div className="flex flex-wrap gap-2 text-xs">
                 <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded">{result.content_type}</span>

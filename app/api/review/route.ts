@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MOS_SYSTEM_PROMPT } from '@/lib/mos-prompt';
+import { db } from '@/lib/db';
 
 const GEMINI_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
@@ -46,12 +47,32 @@ export async function POST(req: NextRequest) {
 
   const data = await res.json();
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  let review;
   try {
-    return NextResponse.json(JSON.parse(text));
+    review = JSON.parse(text);
   } catch {
     return NextResponse.json(
       { error: 'AI trả về không đúng định dạng — thử lại.', raw: text?.slice(0, 300) },
       { status: 502 }
     );
   }
+
+  // Lưu vào DB: PASS/MINOR → chờ duyệt cuối; MAJOR/REWRITE → cần sửa
+  const status =
+    review.decision === 'PASS' || review.decision === 'MINOR_FIX' ? 'cho_duyet' : 'can_sua';
+  const { data: row, error: dbError } = await db
+    .from('mos_submissions')
+    .insert({
+      content, channel, brand: review.brand ?? brand, writer,
+      score: review.score, decision: review.decision, review, status,
+    })
+    .select('id')
+    .single();
+
+  return NextResponse.json({
+    ...review,
+    saved: !dbError,
+    submission_id: row?.id ?? null,
+    db_error: dbError ? dbError.message : undefined,
+  });
 }

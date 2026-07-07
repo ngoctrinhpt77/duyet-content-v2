@@ -69,10 +69,28 @@ export async function POST(req: NextRequest) {
     .select('id')
     .single();
 
+  // Ghi chú sản phẩm đang hiệu lực → cảnh báo nếu bài nhắc tới model đó
+  let product_warnings: { product: string; note_type: string; note: string }[] = [];
+  try {
+    const { data: notes } = await db
+      .from('mos_product_notes')
+      .select('product, note_type, note, effective_from, effective_to, warn_on_review')
+      .eq('warn_on_review', true);
+    const today = new Date().toISOString().slice(0, 10);
+    const lower = content.toLowerCase();
+    product_warnings = (notes ?? [])
+      .filter(n =>
+        lower.includes(n.product.toLowerCase()) &&
+        (!n.effective_to || n.effective_to >= today) // ghi chú hết hạn thì thôi; sắp hiệu lực vẫn cảnh báo
+      )
+      .map(n => ({ product: n.product, note_type: n.note_type, note: n.note }));
+  } catch { /* bảng chưa tạo — bỏ qua */ }
+
   return NextResponse.json({
     ...review,
     saved: !dbError,
     submission_id: row?.id ?? null,
     db_error: dbError ? dbError.message : undefined,
+    product_warnings,
   });
 }

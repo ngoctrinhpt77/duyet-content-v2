@@ -18,6 +18,7 @@ type Review = {
   decision: 'PASS' | 'MINOR_FIX' | 'MAJOR_FIX' | 'REWRITE';
   required_edits: string[]; summary: string;
   saved?: boolean; db_error?: string;
+  product_warnings?: { product: string; note_type: string; note: string }[];
 };
 
 const DECISIONS = {
@@ -142,6 +143,15 @@ export default function Home() {
                 <span className="bg-amber-50 text-amber-700 px-2 py-1 rounded">{result.brand} · {result.tier === 'cao_cap' ? 'Cao cấp' : result.tier === 'pho_thong' ? 'Phổ thông' : '?'}</span>
                 <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded">{result.journey_stage}</span>
               </div>
+
+              {(result.product_warnings?.length ?? 0) > 0 && (
+                <div className="border border-amber-300 bg-amber-50 rounded-lg p-3 text-sm">
+                  <p className="font-semibold text-amber-800 mb-1">⚠️ Lưu ý từ Tài liệu sản phẩm</p>
+                  {result.product_warnings!.map((w, i) => (
+                    <p key={i} className="text-amber-800"><strong>{w.product}</strong>: {w.note}</p>
+                  ))}
+                </div>
+              )}
 
               {result.red_flags?.length > 0 && (
                 <div className="border border-red-300 bg-red-50 rounded-lg p-4">

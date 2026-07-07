@@ -4,9 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const TABS = [
+  { href: '/tong-quan', label: '📊 Tổng quan' },
   { href: '/', label: '⚡ Nộp bài' },
-  { href: '/duyet', label: '📋 Hàng chờ duyệt' },
+  { href: '/duyet', label: '📋 Hàng chờ' },
   { href: '/kho', label: '📚 Kho copy' },
+  { href: '/claims', label: '📜 Sổ Claims' },
+  { href: '/tai-lieu', label: '📦 Tài liệu SP' },
+  { href: '/nhan-su', label: '👥 Nhân sự' },
 ];
 
 export default function Nav() {

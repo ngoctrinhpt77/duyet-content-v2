@@ -25,10 +25,12 @@ export async function POST(req: NextRequest) {
       .select('product, note_type, note, effective_to, warn_on_review, link_content')
       .eq('warn_on_review', true);
     const today = new Date().toISOString().slice(0, 10);
-    const lower = content.toLowerCase();
+    // Chuẩn hóa NFC + bỏ dấu để khớp bền vững (tiếng Việt từ Google Doc vs gõ tay hay lệch NFC/NFD)
+    const norm = (s: string) => s.normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim();
+    const lower = norm(content);
     matched = (notes ?? [])
       .filter(n =>
-        lower.includes(n.product.toLowerCase()) &&
+        n.product && lower.includes(norm(n.product)) &&
         (!n.effective_to || n.effective_to >= today) // hết hạn thì thôi; sắp hiệu lực vẫn tính
       )
       .map(n => ({ product: n.product, note_type: n.note_type, note: n.note, link_content: n.link_content }));

@@ -7,6 +7,7 @@ type Note = {
   id: string; created_at: string; product: string; brand: string | null;
   note_type: string; note: string; effective_from: string | null;
   effective_to: string | null; warn_on_review: boolean; created_by: string | null;
+  link: string | null; link_content: string | null;
 };
 
 const TYPE_LABEL: Record<string, [string, string]> = {
@@ -21,7 +22,8 @@ export default function TaiLieu() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [f, setF] = useState({ product: '', brand: '', note_type: 'luu_y', note: '', effective_from: '', effective_to: '', created_by: '' });
+  const [f, setF] = useState({ product: '', brand: '', note_type: 'luu_y', note: '', effective_from: '', effective_to: '', created_by: '', link: '' });
+  const [saving, setSaving] = useState(false);
 
   const load = useCallback(() => {
     fetch('/api/notes').then(r => r.json())
@@ -31,13 +33,16 @@ export default function TaiLieu() {
   useEffect(load, [load]);
 
   async function add() {
+    setSaving(true);
     const res = await fetch('/api/notes', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(f),
     });
     const d = await res.json();
+    setSaving(false);
     if (!res.ok) { alert(d.error); return; }
+    if (d.link_status) alert(d.link_status); // báo đọc được tài liệu hay không
     setShowForm(false);
-    setF({ product: '', brand: '', note_type: 'luu_y', note: '', effective_from: '', effective_to: '', created_by: '' });
+    setF({ product: '', brand: '', note_type: 'luu_y', note: '', effective_from: '', effective_to: '', created_by: '', link: '' });
     load();
   }
 
@@ -87,9 +92,15 @@ export default function TaiLieu() {
             <textarea value={f.note} onChange={e => setF({ ...f, note: e.target.value })} rows={2}
               placeholder="Nội dung * (VD: Áp dụng giá mới 19.500.000đ từ 01/08 — bài viết dùng giá cũ phải sửa)"
               className="rounded-lg border border-slate-300 text-sm p-2 md:col-span-2" />
-            <button onClick={add} disabled={!f.product.trim() || !f.note.trim()}
+            <div className="md:col-span-2">
+              <input value={f.link} onChange={e => setF({ ...f, link: e.target.value })}
+                placeholder="🔗 Link tài liệu (Google Docs/Sheets/Drive, OneDrive, web) — AI sẽ đọc nội dung khi chấm bài"
+                className="rounded-lg border border-slate-300 text-sm p-2 w-full" />
+              <p className="text-xs text-slate-400 mt-1">Lưu ý: file phải mở quyền <b>“Anyone with the link can view”</b> thì AI mới đọc được. Google Docs/Sheets đọc tốt nhất.</p>
+            </div>
+            <button onClick={add} disabled={saving || !f.product.trim() || !f.note.trim()}
               className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-40 md:col-span-2">
-              Lưu ghi chú
+              {saving ? 'Đang lưu & đọc tài liệu…' : 'Lưu ghi chú'}
             </button>
           </div>
         )}
@@ -111,6 +122,14 @@ export default function TaiLieu() {
                   {n.warn_on_review && <span className="text-xs text-orange-500">⚠️ cảnh báo khi duyệt</span>}
                 </div>
                 <p className="text-sm text-slate-700">{n.note}</p>
+                {n.link && (
+                  <p className="text-xs mt-1">
+                    <a href={n.link} target="_blank" rel="noreferrer" className="text-[#1B4DB1] underline">🔗 Tài liệu đính kèm</a>
+                    {n.link_content
+                      ? <span className="ml-2 bg-green-50 text-green-700 px-1.5 py-0.5 rounded">📄 AI đã đọc ({n.link_content.length} ký tự)</span>
+                      : <span className="ml-2 bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded">⚠️ chưa đọc được — kiểm tra quyền xem</span>}
+                  </p>
+                )}
                 <p className="text-xs text-slate-400 mt-1">
                   {n.effective_from ? `Hiệu lực ${n.effective_from}${n.effective_to ? ` → ${n.effective_to}` : ''}` : `Tạo ${new Date(n.created_at).toLocaleDateString('vi-VN')}`}
                   {n.created_by ? ` · bởi ${n.created_by}` : ''}

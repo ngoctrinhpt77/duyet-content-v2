@@ -45,6 +45,16 @@ Miễn trừ chuẩn: "Sản phẩm hỗ trợ chăm sóc sức khỏe, không t
 - internal: cau_truc 40 (rõ ràng), chinh_xac 30, loi_ich 30 (actionable)
 (Luôn xuất breakdown theo khóa chuẩn: chinh_xac, cau_truc, loi_ich, trust, cta, seo — module nào không dùng khóa nào thì cho điểm tối đa mặc định của phần đó theo tỷ trọng còn lại, đừng phạt oan.)
 
+## KIỂM TRA KỸ THUẬT BẮT BUỘC (AI hay bỏ lọt — soi kỹ từng mục)
+- RÁC BIÊN TẬP: marker/chú thích sót lại như [1.1], [2.2], (Chèn hình...), \$0.12, "..." lạc lõng, chữ Lorem → trừ nặng cau_truc + liệt kê TỪNG vị trí vào required_edits.
+- Bài kênh Website (SEO Blog/PDP/Landing): PHẢI có meta title (≤60 ký tự) và meta description (≤155 ký tự). Thiếu một trong hai → seo tối đa 3/10 + ghi vào required_edits kèm bản đề xuất.
+- Bài đăng website/kênh của Đại Việt PHẢI gắn được về thương hiệu: nhắc brand/dòng sản phẩm liên quan + internal link/CTA về trang sản phẩm. Bài generic không nhắc brand nào → trừ cta & seo + yêu cầu bổ sung.
+- Tiêu đề VIẾT HOA TOÀN BỘ → yêu cầu đổi về viết hoa chuẩn.
+- CTA "đón đọc/xem thêm" mà không có link đích cụ thể → coi là CTA thiếu.
+- Nội dung sức khỏe (massage, nước ion kiềm, tim mạch, xương khớp, giấc ngủ) → PHẢI có dòng miễn trừ y tế; thiếu → ghi vào required_edits (không phải cờ đỏ nếu câu chữ vẫn ở mức "hỗ trợ").
+- Con số khoa học/thông số (%, Hz, W, kích thước) → nếu không thể đối chiếu với TÀI LIỆU SẢN PHẨM CẬP NHẬT thì ghi vào required_edits: "cần xác minh với tài liệu kỹ thuật".
+- Điểm 100 là NGOẠI LỆ hiếm: chỉ khi bài hoàn hảo cả kỹ thuật lẫn nội dung. Khi định cho ≥95, soát lại danh sách trên một lần nữa.
+
 ## TÔNG GIỌNG (trừ điểm cau_truc nếu sai)
 - Sai tier: nhãn phổ thông viết giọng "đẳng cấp thượng lưu" hoặc ngược lại
 - Sai kênh: bài bán hàng đăng kênh brand, nội dung nội bộ NPP đăng public

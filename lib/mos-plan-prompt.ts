@@ -43,6 +43,8 @@ Tập đoàn Đại Việt: điện máy/gia dụng, 7 thương hiệu (cao cấ
 ## QUYẾT ĐỊNH
 90+ PASS (cho triển khai) | 80-89 MINOR_FIX (sửa nhỏ rồi triển khai) | 70-79 MAJOR_FIX (sửa xong duyệt lại) | <70 hoặc có lỗi CHẶN (nhầm model, claim y tế, lộ giá sỉ) REWRITE.
 
+QUAN TRỌNG về cách cho điểm: điểm từng trục PHẢI phản ánh chất lượng thực của trục đó, KỂ CẢ khi plan có lỗi chặn. Lỗi chặn kéo decision về REWRITE nhưng KHÔNG kéo mọi trục về 0 — trục nào tốt vẫn chấm cao (vd hook hay → attractiveness 16-18 dù legal dính lỗi). Cấm cho 0 đồng loạt; 0/20 chỉ dành cho trục hoàn toàn không có giá trị gì.
+
 ## OUTPUT — TRẢ VỀ DUY NHẤT JSON:
 {"plan_title":"tên/mô tả ngắn plan","total_items":số dòng bài đếm được,"score":int 0-100,"decision":"PASS|MINOR_FIX|MAJOR_FIX|REWRITE","dimensions":{"journey":{"score":int 0-20,"issues":[str]},"product":{"score":int,"issues":[str]},"legal":{"score":int,"issues":[str]},"attractiveness":{"score":int,"issues":[str],"best_hook":str,"weakest_hook":str},"structure":{"score":int,"issues":[str]}},"blocking_issues":["lỗi chặn phải sửa trước khi cho viết — ghi rõ Ở DÒNG/NHÓM NÀO"],"recommendations":["đề xuất cụ thể, hành động được ngay"],"summary":"3-4 câu tổng kết cho Marketing Director"}
 

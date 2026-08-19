@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 const TABS = [
   { href: '/tong-quan', label: '📊 Tổng quan' },
   { href: '/', label: '⚡ Nộp bài' },
+  { href: '/duyet-plan', label: '📅 Duyệt Plan' },
   { href: '/duyet', label: '📋 Hàng chờ' },
   { href: '/kho', label: '📚 Kho copy' },
   { href: '/claims', label: '📜 Sổ Claims' },

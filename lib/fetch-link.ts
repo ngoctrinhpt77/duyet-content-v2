@@ -1,15 +1,18 @@
 // Đọc nội dung text từ link tài liệu (Google Docs/Sheets/Drive, OneDrive, web)
 // Chỉ đọc được file đã mở quyền "Anyone with the link can view".
 
-const MAX_CHARS = 6000;
+const MAX_CHARS = 50000; // plan/tài liệu dài đọc trọn; nơi dùng tự cắt theo nhu cầu (review chỉ nhúng 2500)
 
 function transformUrl(url: string): string {
   // Google Docs → export txt
   let m = url.match(/docs\.google\.com\/document\/d\/([\w-]+)/);
   if (m) return `https://docs.google.com/document/d/${m[1]}/export?format=txt`;
-  // Google Sheets → export csv
+  // Google Sheets → export csv (giữ đúng tab gid nếu có)
   m = url.match(/docs\.google\.com\/spreadsheets\/d\/([\w-]+)/);
-  if (m) return `https://docs.google.com/spreadsheets/d/${m[1]}/export?format=csv`;
+  if (m) {
+    const gid = url.match(/[#?&]gid=(\d+)/);
+    return `https://docs.google.com/spreadsheets/d/${m[1]}/export?format=csv${gid ? `&gid=${gid[1]}` : ''}`;
+  }
   // Google Drive file → direct download
   m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (m) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
@@ -31,7 +34,7 @@ export async function fetchLinkContent(url: string): Promise<{ content: string |
     const res = await fetch(transformUrl(url), {
       redirect: 'follow',
       headers: { 'User-Agent': 'Mozilla/5.0 (MOS-DaiViet content-reader)' },
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(25000),
     });
     if (!res.ok) return { content: null, error: `HTTP ${res.status} — link chưa mở quyền xem công khai?` };
 

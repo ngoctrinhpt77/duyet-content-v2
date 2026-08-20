@@ -11,6 +11,7 @@ type Note = {
 };
 
 const TYPE_LABEL: Record<string, [string, string]> = {
+  thong_so: ['📐 Thông số chuẩn', 'bg-indigo-100 text-indigo-700'],
   doi_gia: ['💰 Đổi giá', 'bg-amber-100 text-amber-700'],
   ngung_ban: ['⛔ Ngừng bán', 'bg-red-100 text-red-700'],
   claim_moi: ['📜 Claim mới', 'bg-green-100 text-green-700'],
@@ -22,7 +23,7 @@ export default function TaiLieu() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [f, setF] = useState({ product: '', brand: '', note_type: 'luu_y', note: '', effective_from: '', effective_to: '', created_by: '', link: '' });
+  const [f, setF] = useState({ product: '', brand: '', note_type: 'thong_so', note: '', effective_from: '', effective_to: '', created_by: '', link: '' });
   const [saving, setSaving] = useState(false);
 
   const load = useCallback(() => {
@@ -82,7 +83,7 @@ export default function TaiLieu() {
         {showForm && (
           <div className="bg-white rounded-xl border border-slate-200 p-4 mb-5 grid gap-3 md:grid-cols-2">
             <input value={f.product} onChange={e => setF({ ...f, product: e.target.value })}
-              placeholder="Sản phẩm/model * (VD: Makano MN205)" className="rounded-lg border border-slate-300 text-sm p-2" />
+              placeholder="Mã model * (VD: MN205, DT300, DC201)" className="rounded-lg border border-slate-300 text-sm p-2" />
             <input value={f.brand} onChange={e => setF({ ...f, brand: e.target.value })}
               placeholder="Thương hiệu (VD: Makano)" className="rounded-lg border border-slate-300 text-sm p-2" />
             <select value={f.note_type} onChange={e => setF({ ...f, note_type: e.target.value })}
@@ -100,9 +101,9 @@ export default function TaiLieu() {
               className="rounded-lg border border-slate-300 text-sm p-2 md:col-span-2" />
             <div className="md:col-span-2">
               <input value={f.link} onChange={e => setF({ ...f, link: e.target.value })}
-                placeholder="🔗 Link tài liệu (Google Docs/Sheets/Drive, OneDrive, web) — AI sẽ đọc nội dung khi chấm bài"
+                placeholder="🔗 Link trang sản phẩm tapdoandaiviet.com.vn hoặc tài liệu (Google Docs/Sheets/Drive) — AI đọc khi chấm bài"
                 className="rounded-lg border border-slate-300 text-sm p-2 w-full" />
-              <p className="text-xs text-slate-400 mt-1">Lưu ý: file phải mở quyền <b>“Anyone with the link can view”</b> thì AI mới đọc được. Google Docs/Sheets đọc tốt nhất.</p>
+              <p className="text-xs text-slate-400 mt-1">Nguồn chuẩn: <b>trang sản phẩm trên tapdoandaiviet.com.vn</b> (AI đọc trực tiếp), hoặc Google Docs/Sheets đã mở quyền <b>“Anyone with the link can view”</b>.</p>
             </div>
             <button onClick={add} disabled={saving || !f.product.trim() || !f.note.trim()}
               className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-40 md:col-span-2">

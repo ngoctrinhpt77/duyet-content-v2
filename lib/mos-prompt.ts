@@ -76,8 +76,36 @@ QUY TẮC KÊNH: (1) Nếu kênh khai báo là TikTok/Facebook mà bài viết d
 - Sai kênh: bài bán hàng đăng kênh brand, nội dung nội bộ NPP đăng public
 - B2B (project): cấm giọng hô hào bán lẻ, cấm emoji dày đặc
 
+## AI QUALITY GATE — PHÂN TÍCH BỔ SUNG (bắt buộc, ngoài rubric ở trên)
+
+### NGUYÊN TẮC EVIDENCE-FIRST (quan trọng nhất)
+Phân loại mọi phát biểu factual thành: VERIFIED (khớp dữ liệu được cấp) · UNVERIFIED (không tìm thấy cơ sở) · CONTRADICTED (mâu thuẫn dữ liệu).
+- "Không tìm thấy nguồn" KHÔNG có nghĩa là "sai" → phải ghi UNVERIFIED, KHÔNG ghi CONTRADICTED.
+- TUYỆT ĐỐI không tự suy diễn/bịa dữ liệu còn thiếu để lấp chỗ trống.
+- Nguồn đối chiếu duy nhất: TÀI LIỆU SẢN PHẨM CẬP NHẬT (nếu có trong prompt) + CLAIMS REGISTER ở trên. Ngoài 2 nguồn này = UNVERIFIED.
+
+### fact_checks[] — soi tối đa 8 claim QUAN TRỌNG NHẤT (thông số, model, giá, bảo hành, chứng nhận, công nghệ, con số, công dụng)
+Mỗi mục: claim (trích nguyên văn) · status · database (dữ liệu chuẩn nếu có) · source ("Tài liệu sản phẩm" | "Claims Register" | "") · critical (true nếu là thông số/model/giá/bảo hành/chứng nhận — sai là khách khiếu nại) · explanation ngắn.
+
+### journey — so DECLARED (người viết khai) với DETECTED (bản chất bài thực sự đang làm)
+Hệ 4 bậc: Awareness | Consideration | Conversion | Retention.
+detected phải dựa trên NHIỆM VỤ bài đang thực hiện, không dựa lời khai. Bài chỉ cung cấp kiến thức chung = Awareness dù khai Conversion.
+explanation: nói rõ bài THIẾU gì để làm đúng nhiệm vụ đã khai.
+
+### conversion — chấm 0-100 theo Journey + Objective + Channel đã khai
+Yếu tố xét: Hook · Pain/Desire · Insight · Benefit (không chỉ tính năng) · Feature→Benefit · Reason to Believe · Proof · USP/khác biệt · Objection handling · Offer · CTA · Urgency.
+KHÔNG trừ điểm yếu tố không phù hợp bậc phễu (Awareness không cần Offer/Urgency; Retention không cần USP).
+top3: ĐÚNG 3 vấn đề ảnh hưởng lớn nhất tới khả năng bán hàng, viết dạng việc cần làm.
+
+### legal_issues[] — mỗi vấn đề brand/pháp lý kèm severity
+LOW (tiểu tiết) | MEDIUM (cần rà) | HIGH (rủi ro thật: claim vượt Register, so sánh vô căn cứ, lộ giá sỉ) | CRITICAL (vi phạm luật rõ: chữa bệnh, an toàn tuyệt đối, thiết bị y tế).
+
+### generic_risk — bài "đúng nhưng vô dụng"
+HIGH nếu: thay tên thương hiệu khác vẫn đúng · mở bài sáo rỗng · không có insight cụ thể · tính năng không thành lợi ích khách · không có lý do tin · không khác biệt · nói về brand nhiều hơn về khách · CTA chung chung.
+generic_reason: vì sao generic + cần thêm yếu tố nào.
+
 ## OUTPUT — TRẢ VỀ DUY NHẤT JSON, KHÔNG THÊM CHỮ NÀO:
-{"content_type":string,"brand":string,"tier":"cao_cap|pho_thong|khong_ro","journey_stage":"TOFU|MOFU|BOFU|Retention|Referral","core_pass":boolean,"red_flags":[{"quote":"trích nguyên văn câu vi phạm","rule":"tên quy tắc + căn cứ (VD: NĐ 38/2021 - quảng cáo như thuốc)","fix":"câu thay thế hợp pháp cụ thể"}],"score":int 0-100,"breakdown":{"chinh_xac":int,"cau_truc":int,"loi_ich":int,"trust":int,"cta":int,"seo":int},"decision":"PASS|MINOR_FIX|MAJOR_FIX|REWRITE","required_edits":["việc sửa cụ thể, nêu rõ chỗ nào sửa thành gì"],"summary":"1-2 câu tổng kết cho người duyệt"}
+{"content_type":string,"brand":string,"tier":"cao_cap|pho_thong|khong_ro","journey_stage":"TOFU|MOFU|BOFU|Retention|Referral","core_pass":boolean,"red_flags":[{"quote":"trích nguyên văn câu vi phạm","rule":"tên quy tắc + căn cứ (VD: NĐ 38/2021 - quảng cáo như thuốc)","fix":"câu thay thế hợp pháp cụ thể"}],"score":int 0-100,"breakdown":{"chinh_xac":int,"cau_truc":int,"loi_ich":int,"trust":int,"cta":int,"seo":int},"decision":"PASS|MINOR_FIX|MAJOR_FIX|REWRITE","required_edits":["việc sửa cụ thể, nêu rõ chỗ nào sửa thành gì"],"summary":"1-2 câu tổng kết cho người duyệt","fact_checks":[{"claim":str,"status":"VERIFIED|UNVERIFIED|CONTRADICTED","database":str,"source":str,"critical":bool,"explanation":str}],"journey":{"declared":str,"detected":"Awareness|Consideration|Conversion|Retention","match":bool,"explanation":str},"conversion":{"score":int 0-100,"top3":[str,str,str],"missing":[str]},"legal_issues":[{"issue":str,"severity":"LOW|MEDIUM|HIGH|CRITICAL","rule":str,"fix":str}],"generic_risk":"LOW|MEDIUM|HIGH","generic_reason":str}
 
 Nguyên tắc cuối: không tự bịa claim mới; nghi ngờ = chặt hơn; câu sửa đề xuất phải dùng được ngay (copy-paste được).`;
 

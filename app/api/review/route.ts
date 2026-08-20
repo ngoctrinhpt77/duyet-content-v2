@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MOS_SYSTEM_PROMPT } from '@/lib/mos-prompt';
 import { db } from '@/lib/db';
+import { evaluateGate } from '@/lib/quality-gate';
 
 const GEMINI_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 export async function POST(req: NextRequest) {
-  const { content, channel, brand, writer } = await req.json();
+  const { content, channel, brand, writer,
+          declared_journey, objective, audience,
+          parent_id, override_requested } = await req.json();
 
   if (!content || content.trim().length < 20) {
     return NextResponse.json(
@@ -48,6 +51,9 @@ export async function POST(req: NextRequest) {
     channel ? `Kênh dự kiến: ${channel}.` : '',
     brand ? `Thương hiệu khai báo: ${brand}.` : '',
     writer ? `Người viết: ${writer}.` : '',
+    declared_journey ? `Journey người viết KHAI BÁO: ${declared_journey}.` : '',
+    objective ? `Mục tiêu bài (Objective): ${objective}.` : '',
+    audience ? `Đối tượng nhắm tới (Audience): ${audience}.` : '',
     notesContext,
     '',
     'Bài cần duyệt:',
@@ -87,20 +93,47 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Lưu vào DB: PASS/MINOR → chờ duyệt cuối; MAJOR/REWRITE → cần sửa
-  const status =
-    review.decision === 'PASS' || review.decision === 'MINOR_FIX' ? 'cho_duyet' : 'can_sua';
+  // ---- AI QUALITY GATE (deterministic, code quyết định) ----
+  const gate = evaluateGate(review, declared_journey);
+
+  // PASS/WARN → vào hàng chờ Director. FAIL → giữ ở "cần sửa", KHÔNG lên Director.
+  // Xin ngoại lệ (có lý do + được phép) → vào Exception Queue.
+  const isException = gate.gate_status === 'FAIL' && override_requested && gate.can_request_exception;
+  const status = isException ? 'ngoai_le'
+    : gate.gate_status === 'FAIL' ? 'can_sua'
+    : 'cho_duyet';
+
+  // version: nếu là bản sửa lại của bài cũ
+  let version = 1;
+  if (parent_id) {
+    const { data: prev } = await db.from('mos_submissions').select('version').eq('id', parent_id).single();
+    version = (prev?.version ?? 1) + 1;
+  }
+
   const { data: row, error: dbError } = await db
     .from('mos_submissions')
     .insert({
       content, channel, brand: review.brand ?? brand, writer,
       score: review.score, decision: review.decision, review, status,
+      gate_status: gate.gate_status, gates: gate.gates,
+      declared_journey: declared_journey ?? null,
+      objective: objective ?? null,
+      audience: audience ?? null,
+      parent_id: parent_id ?? null,
+      version,
+      override_requested: isException ? override_requested : null,
     })
     .select('id')
     .single();
 
   return NextResponse.json({
     ...review,
+    gate_status: gate.gate_status,
+    gates: gate.gates,
+    blockers: gate.blockers,
+    gate_warnings: gate.warnings,
+    can_request_exception: gate.can_request_exception,
+    version,
     saved: !dbError,
     submission_id: row?.id ?? null,
     db_error: dbError ? dbError.message : undefined,

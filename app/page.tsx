@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Nav from './nav';
 
 const BRANDS = ['Daikiosan', 'Makano', 'Daikio', 'Nakami', 'Takasa', 'Kasuto', 'Achisa'];
+const JOURNEYS = ['Awareness', 'Consideration', 'Conversion', 'Retention'];
+const OBJECTIVES = ['Educate', 'Build Trust', 'Generate Leads', 'Drive Sales', 'Engagement', 'Retention'];
 const CHANNELS = [
   'Website - SEO Blog', 'Website - PDP', 'Website - Tin trúng thầu', 'Landing Page',
   'Facebook', 'TikTok', 'Zalo OA', 'PR báo chí', 'Group NPP/Đại lý',
@@ -19,7 +21,30 @@ type Review = {
   required_edits: string[]; summary: string;
   saved?: boolean; db_error?: string;
   product_warnings?: { product: string; note_type: string; note: string }[];
+  gate_status?: 'PASS' | 'WARN' | 'FAIL';
+  gates?: {
+    fact: { status: string; contradicted: number; unverified_critical: number };
+    journey: { status: string; declared?: string; detected?: string; match: boolean };
+    conversion: { status: string; score: number; threshold: number };
+    legal: { status: string; highest: string };
+    generic: { risk: string };
+  };
+  blockers?: string[]; gate_warnings?: string[]; can_request_exception?: boolean;
+  fact_checks?: { claim: string; status: string; database?: string; source?: string; critical?: boolean; explanation?: string }[];
+  conversion?: { score?: number; top3?: string[]; missing?: string[] };
+  legal_issues?: { issue: string; severity: string; rule?: string; fix?: string }[];
+  generic_reason?: string;
+  submission_id?: string | null;
 };
+
+const GATE_UI = {
+  PASS: { label: 'PASS — Đủ điều kiện gửi duyệt', cls: 'bg-green-50 border-green-300 text-green-800', dot: '🟢' },
+  WARN: { label: 'WARN — Gửi được nhưng còn điểm cần cải thiện', cls: 'bg-yellow-50 border-yellow-300 text-yellow-800', dot: '🟡' },
+  FAIL: { label: 'FAIL — Chưa vượt Quality Gate, phải sửa trước', cls: 'bg-red-50 border-red-300 text-red-800', dot: '🔴' },
+} as const;
+
+const ST = (s?: string) => s === 'PASS' || s === 'READY' ? 'text-green-600'
+  : s === 'FAIL' || s === 'NOT_READY' ? 'text-red-600' : 'text-yellow-600';
 
 const DECISIONS = {
   PASS:      { label: 'PASS – Đăng ngay',    cls: 'bg-green-100 text-green-800 border-green-300' },
@@ -38,9 +63,29 @@ export default function Home() {
   const [channel, setChannel] = useState(CHANNELS[4]);
   const [brand, setBrand] = useState('');
   const [writer, setWriter] = useState('');
+  const [journey, setJourney] = useState(JOURNEYS[0]);
+  const [objective, setObjective] = useState(OBJECTIVES[0]);
+  const [audience, setAudience] = useState('');
+  const [exceptionReason, setExceptionReason] = useState('');
+  const [showDetail, setShowDetail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<Review | null>(null);
+
+  async function requestException() {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/review', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, channel, brand, writer,
+          declared_journey: journey, objective, audience, override_requested: exceptionReason }),
+      });
+      const d = await res.json();
+      if (res.ok) { setResult(d); setExceptionReason(''); }
+      else setError(d.error ?? 'Lỗi gửi ngoại lệ');
+    } catch { setError('Không kết nối được máy chủ'); }
+    finally { setLoading(false); }
+  }
 
   async function submit() {
     setLoading(true); setError(''); setResult(null);
@@ -48,7 +93,7 @@ export default function Home() {
       const res = await fetch('/api/review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, channel, brand, writer }),
+        body: JSON.stringify({ content, channel, brand, writer, declared_journey: journey, objective, audience }),
       });
       const data = await res.json();
       if (!res.ok) setError(data.error ?? 'Có lỗi xảy ra');
@@ -85,6 +130,28 @@ export default function Home() {
               </select>
             </label>
           </div>
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <label className="block">
+              <span className="text-sm text-slate-600">Customer Journey <span className="text-red-500">*</span></span>
+              <select value={journey} onChange={e => setJourney(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-300 text-sm p-2">
+                {JOURNEYS.map(j => <option key={j}>{j}</option>)}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-sm text-slate-600">Objective <span className="text-red-500">*</span></span>
+              <select value={objective} onChange={e => setObjective(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-300 text-sm p-2">
+                {OBJECTIVES.map(o => <option key={o}>{o}</option>)}
+              </select>
+            </label>
+          </div>
+          <label className="block mb-3">
+            <span className="text-sm text-slate-600">Audience (đối tượng nhắm tới)</span>
+            <input value={audience} onChange={e => setAudience(e.target.value)}
+              placeholder="VD: Gia đình có con nhỏ ở chung cư, ngân sách 15-20 triệu"
+              className="mt-1 w-full rounded-lg border border-slate-300 text-sm p-2" />
+          </label>
           <label className="block mb-3">
             <span className="text-sm text-slate-600">Người viết <span className="text-red-500">*</span></span>
             <input value={writer} onChange={e => setWriter(e.target.value)} placeholder="VD: Nguyễn Thị Hoa"
@@ -120,6 +187,98 @@ export default function Home() {
 
           {result && (
             <div className="space-y-4">
+              {result.gate_status && result.gates && (
+                <>
+                  <div className={`rounded-lg border-2 p-3 ${GATE_UI[result.gate_status].cls}`}>
+                    <p className="font-bold">{GATE_UI[result.gate_status].dot} {GATE_UI[result.gate_status].label}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="border border-slate-200 rounded-lg p-2">
+                      <p className="text-slate-500">Fact Accuracy</p>
+                      <p className={`font-bold ${ST(result.gates.fact.status)}`}>{result.gates.fact.status}</p>
+                      {result.gates.fact.contradicted > 0 && <p className="text-red-600">{result.gates.fact.contradicted} claim sai dữ liệu</p>}
+                      {result.gates.fact.unverified_critical > 0 && <p className="text-orange-600">{result.gates.fact.unverified_critical} claim trọng yếu chưa xác minh</p>}
+                    </div>
+                    <div className="border border-slate-200 rounded-lg p-2">
+                      <p className="text-slate-500">Customer Journey</p>
+                      <p className={`font-bold ${ST(result.gates.journey.status)}`}>{result.gates.journey.match ? 'KHỚP' : 'MISMATCH'}</p>
+                      <p className="text-slate-500">Khai: {result.gates.journey.declared} → AI thấy: {result.gates.journey.detected}</p>
+                    </div>
+                    <div className="border border-slate-200 rounded-lg p-2">
+                      <p className="text-slate-500">Conversion Readiness</p>
+                      <p className={`font-bold ${ST(result.gates.conversion.status)}`}>{result.gates.conversion.score}/{result.gates.conversion.threshold} · {result.gates.conversion.status}</p>
+                    </div>
+                    <div className="border border-slate-200 rounded-lg p-2">
+                      <p className="text-slate-500">Brand / Legal</p>
+                      <p className={`font-bold ${ST(result.gates.legal.status)}`}>{result.gates.legal.status}</p>
+                      <p className="text-slate-500">Mức cao nhất: {result.gates.legal.highest}</p>
+                    </div>
+                  </div>
+
+                  {result.gates.generic.risk !== 'LOW' && (
+                    <div className="border border-amber-300 bg-amber-50 rounded-lg p-3 text-sm">
+                      <p className="font-semibold text-amber-800">⚠️ Generic Risk: {result.gates.generic.risk}</p>
+                      {result.generic_reason && <p className="text-amber-800 text-xs mt-1">{result.generic_reason}</p>}
+                    </div>
+                  )}
+
+                  {(result.blockers?.length ?? 0) > 0 && (
+                    <div className="border-2 border-red-300 bg-red-50 rounded-lg p-3">
+                      <p className="font-bold text-red-800 text-sm mb-1">🚫 Phải sửa trước khi gửi duyệt</p>
+                      <ul className="list-disc list-inside text-sm text-red-900 space-y-1">
+                        {result.blockers!.map((b, i) => <li key={i}>{b}</li>)}
+                      </ul>
+                    </div>
+                  )}
+
+                  {(result.conversion?.top3?.length ?? 0) > 0 && (
+                    <div className="border border-slate-200 rounded-lg p-3">
+                      <p className="font-semibold text-sm text-slate-700 mb-1">🎯 3 việc cần sửa trước</p>
+                      <ol className="list-decimal list-inside text-sm text-slate-600 space-y-1">
+                        {result.conversion!.top3!.map((t, i) => <li key={i}>{t}</li>)}
+                      </ol>
+                    </div>
+                  )}
+
+                  {(result.gate_warnings?.length ?? 0) > 0 && (
+                    <div className="border border-yellow-300 bg-yellow-50 rounded-lg p-3 text-sm">
+                      <p className="font-semibold text-yellow-800 mb-1">Lưu ý</p>
+                      <ul className="list-disc list-inside text-yellow-900 text-xs space-y-0.5">
+                        {result.gate_warnings!.map((w, i) => <li key={i}>{w}</li>)}
+                      </ul>
+                    </div>
+                  )}
+
+                  {result.gate_status === 'FAIL' && (
+                    <div className="border border-slate-300 rounded-lg p-3 text-sm bg-slate-50">
+                      {result.can_request_exception ? (
+                        <>
+                          <p className="text-slate-700 font-medium mb-1">Cần gửi gấp dù chưa đạt?</p>
+                          <input value={exceptionReason} onChange={e => setExceptionReason(e.target.value)}
+                            placeholder="Bắt buộc: lý do xin ngoại lệ"
+                            className="w-full rounded-lg border border-slate-300 text-sm p-2 mb-2" />
+                          <button onClick={requestException} disabled={!exceptionReason.trim() || loading}
+                            className="text-sm bg-slate-700 text-white px-3 py-1.5 rounded-lg disabled:opacity-40">
+                            Yêu cầu ngoại lệ
+                          </button>
+                        </>
+                      ) : (
+                        <p className="text-red-700 text-xs">
+                          ⛔ Bài sai dữ liệu sản phẩm hoặc vi phạm pháp lý nghiêm trọng — <b>không thể xin ngoại lệ</b>. Phải sửa rồi chấm lại.
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  <button onClick={() => setShowDetail(!showDetail)} className="text-sm text-[#1B4DB1] font-medium">
+                    {showDetail ? '▲ Ẩn phân tích chi tiết' : '▼ Xem phân tích chi tiết (rubric 100đ, claims, cờ đỏ)'}
+                  </button>
+                </>
+              )}
+
+              {(!result.gate_status || showDetail) && (
+              <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className={`text-4xl font-bold ${result.score >= 90 ? 'text-green-600' : result.score >= 80 ? 'text-yellow-600' : result.score >= 70 ? 'text-orange-600' : 'text-red-600'}`}>
                   {result.score}
@@ -186,6 +345,26 @@ export default function Home() {
                     {result.required_edits.map((e, i) => <li key={i}>{e}</li>)}
                   </ul>
                 </div>
+              )}
+
+              {(result.fact_checks?.length ?? 0) > 0 && (
+                <div>
+                  <h3 className="font-semibold text-sm text-slate-700 mb-2">Đối chiếu dữ liệu (Fact check)</h3>
+                  <div className="space-y-1.5">
+                    {result.fact_checks!.map((f, i) => (
+                      <div key={i} className="text-xs border border-slate-200 rounded-lg p-2">
+                        <p className={f.status === 'CONTRADICTED' ? 'text-red-700' : f.status === 'UNVERIFIED' ? 'text-orange-700' : 'text-green-700'}>
+                          {f.status === 'CONTRADICTED' ? '🔴' : f.status === 'UNVERIFIED' ? '🟡' : '🟢'} {f.status}{f.critical ? ' · trọng yếu' : ''}
+                        </p>
+                        <p className="text-slate-800">{f.claim}</p>
+                        {f.database && <p className="text-slate-500">Chuẩn: {f.database}{f.source ? ` — ${f.source}` : ''}</p>}
+                        {!f.database && f.status === 'UNVERIFIED' && <p className="text-slate-500">Không tìm thấy cơ sở xác minh trong Knowledge Base — cần kiểm nguồn trước khi dùng.</p>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              </div>
               )}
             </div>
           )}

@@ -8,6 +8,11 @@ type Row = {
   brand: string | null; writer: string; score: number | null; decision: string | null;
   status: string;
   review: { red_flags?: { quote: string; rule: string; fix: string }[]; summary?: string; required_edits?: string[] } | null;
+  gate_status?: 'PASS' | 'WARN' | 'FAIL' | null;
+  override_requested?: string | null;
+  version?: number;
+  declared_journey?: string | null;
+  objective?: string | null;
 };
 
 const DECISION_CLS: Record<string, string> = {
@@ -16,7 +21,7 @@ const DECISION_CLS: Record<string, string> = {
 };
 
 export default function Duyet() {
-  const [tab, setTab] = useState<'cho_duyet' | 'can_sua'>('cho_duyet');
+  const [tab, setTab] = useState<'cho_duyet' | 'can_sua' | 'ngoai_le'>('cho_duyet');
   const [rows, setRows] = useState<Row[]>([]);
   const [open, setOpen] = useState<Row | null>(null);
   const [reviewer, setReviewer] = useState('');
@@ -59,6 +64,10 @@ export default function Duyet() {
               className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === 'can_sua' ? 'bg-[#1B4DB1] text-white' : 'bg-white border border-slate-200 text-slate-600'}`}>
               ✏️ Cần sửa
             </button>
+            <button onClick={() => setTab('ngoai_le')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === 'ngoai_le' ? 'bg-[#1B4DB1] text-white' : 'bg-white border border-slate-200 text-slate-600'}`}>
+              🚩 Ngoại lệ
+            </button>
           </div>
           <input value={reviewer} onChange={e => setReviewer(e.target.value)}
             placeholder="Tên người duyệt cuối *"
@@ -82,9 +91,20 @@ export default function Duyet() {
                 <div className="min-w-0">
                   <p className="text-sm text-slate-800 line-clamp-2">{r.content.slice(0, 180)}…</p>
                   <div className="flex gap-2 mt-2 text-xs flex-wrap">
+                    {r.gate_status && (
+                      <span className={`px-2 py-0.5 rounded font-bold ${
+                        r.gate_status === 'PASS' ? 'bg-green-100 text-green-700'
+                        : r.gate_status === 'WARN' ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-red-100 text-red-700'}`}>
+                        {r.gate_status === 'PASS' ? '🟢' : r.gate_status === 'WARN' ? '🟡' : '🔴'} GATE {r.gate_status}
+                      </span>
+                    )}
+                    {!r.gate_status && <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-500">chưa qua Gate</span>}
                     <span className={`px-2 py-0.5 rounded font-semibold ${DECISION_CLS[r.decision ?? ''] ?? 'bg-slate-100'}`}>
                       {r.score} · {r.decision}
                     </span>
+                    {(r.version ?? 1) > 1 && <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700">v{r.version}</span>}
+                    {r.declared_journey && <span className="px-2 py-0.5 rounded bg-purple-50 text-purple-700">{r.declared_journey}</span>}
                     {r.brand && <span className="bg-amber-50 text-amber-700 px-2 py-0.5 rounded">{r.brand}</span>}
                     {r.channel && <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded">{r.channel}</span>}
                     <span className="text-slate-400">✍️ {r.writer} · {new Date(r.created_at).toLocaleString('vi-VN')}</span>
@@ -103,6 +123,12 @@ export default function Duyet() {
                     <pre className="text-xs bg-slate-50 rounded-lg p-3 whitespace-pre-wrap max-h-64 overflow-y-auto">{r.content}</pre>
                   </div>
                   <div className="space-y-3">
+                    {r.override_requested && (
+                      <div className="border border-orange-300 bg-orange-50 rounded-lg p-3 text-sm">
+                        <p className="font-semibold text-orange-800">🚩 Yêu cầu ngoại lệ (bài chưa qua Quality Gate)</p>
+                        <p className="text-orange-900 text-xs mt-1">Lý do: {r.override_requested}</p>
+                      </div>
+                    )}
                     {r.review?.summary && <p className="text-sm text-slate-600">{r.review.summary}</p>}
                     {(r.review?.red_flags?.length ?? 0) > 0 && (
                       <div className="border border-red-200 bg-red-50 rounded-lg p-3 text-xs space-y-2">
@@ -127,6 +153,18 @@ export default function Duyet() {
                           <button onClick={() => act(r.id, 'can_sua')}
                             className="bg-orange-100 text-orange-700 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-orange-200">
                             ↩ Trả về sửa
+                          </button>
+                        </>
+                      )}
+                      {tab === 'ngoai_le' && (
+                        <>
+                          <button onClick={() => act(r.id, 'da_duyet')}
+                            className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-green-700">
+                            ✅ Chấp nhận ngoại lệ → Kho copy
+                          </button>
+                          <button onClick={() => act(r.id, 'can_sua')}
+                            className="bg-orange-100 text-orange-700 text-sm font-semibold px-4 py-2 rounded-lg hover:bg-orange-200">
+                            ↩ Từ chối, trả về sửa
                           </button>
                         </>
                       )}

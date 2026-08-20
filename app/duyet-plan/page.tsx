@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Nav from '../nav';
 
-type Dim = { score: number; issues: string[]; best_hook?: string; weakest_hook?: string };
+type Dim = { score: number; issues: string[]; best_hook?: string; weakest_hook?: string; phu_song?: string; ty_le_phieu?: string; sai_kenh?: string[] };
 type PlanReview = {
   plan_title: string; total_items: number; score: number;
   decision: 'PASS' | 'MINOR_FIX' | 'MAJOR_FIX' | 'REWRITE';
@@ -133,6 +133,18 @@ export default function DuyetPlan() {
                           {d.issues.map((s, i) => <li key={i}>{s}</li>)}
                         </ul>
                       ) : <p className="text-xs text-green-600">Không có vấn đề.</p>}
+                      {k === 'journey' && (d.ty_le_phieu || d.phu_song || (d.sai_kenh?.length ?? 0) > 0) && (
+                        <div className="mt-2 space-y-1 text-xs border-t border-slate-100 pt-2">
+                          {d.ty_le_phieu && <p className="text-slate-700">📊 Tỷ lệ phễu: <b>{d.ty_le_phieu}</b></p>}
+                          {d.phu_song && <p className="text-orange-700">🕳️ Thiếu bậc: {d.phu_song}</p>}
+                          {(d.sai_kenh?.length ?? 0) > 0 && (
+                            <div className="text-red-700">
+                              <p>📱 Sai kênh theo bậc phễu:</p>
+                              <ul className="list-disc list-inside">{d.sai_kenh!.map((x, i) => <li key={i}>{x}</li>)}</ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
                       {k === 'attractiveness' && d.best_hook && (
                         <p className="text-xs text-green-700 mt-2">👍 Hook tốt nhất: “{d.best_hook}”</p>
                       )}

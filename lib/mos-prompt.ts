@@ -56,6 +56,21 @@ Miễn trừ chuẩn: "Sản phẩm hỗ trợ chăm sóc sức khỏe, không t
 - Con số khoa học/thông số (%, Hz, W, kích thước) → nếu không thể đối chiếu với TÀI LIỆU SẢN PHẨM CẬP NHẬT thì ghi vào required_edits: "cần xác minh với tài liệu kỹ thuật".
 - Điểm 100 là NGOẠI LỆ hiếm: chỉ khi bài hoàn hảo cả kỹ thuật lẫn nội dung. Khi định cho ≥95, soát lại danh sách trên một lần nữa.
 
+## CHUẨN THEO KÊNH (bắt buộc soi — bài đúng nội dung nhưng SAI KÊNH vẫn phải trừ điểm nặng cau_truc + cta)
+| Kênh | Bậc phễu hợp | Độ dài | Hook | CTA | Cấm |
+|---|---|---|---|---|---|
+| TikTok | TOFU (BOFU khi live) | caption ≤150 ký tự, video 15-60s | BẮT BUỘC hook 3 giây đầu | ngắn, 1 hành động ("xem giỏ hàng", "vào live 15h") | văn phong SEO/báo chí, meta title/description, đoạn >3 dòng |
+| Facebook | TOFU→MOFU (BOFU cho KM) | 80-300 chữ | hook trong ~125 ký tự đầu (trước nút Xem thêm) | inbox tư vấn / xem web / tìm đại lý | nhồi từ khóa SEO, viết như blog, emoji dày ở brand cao cấp, giá sỉ |
+| Zalo OA | MOFU, Retention | 40-120 chữ | câu đầu nêu ngay việc khách cần làm | ĐÚNG 1 CTA | nhiều CTA, nội dung dài, gửi đại trà |
+| Website SEO Blog | TOFU→MOFU | ≥800 từ (tin tức ≥400) | từ khóa chính trong 100 từ đầu | CTA mềm + internal link về PDP | thiếu meta, không nhắc brand, giọng hô hào, tiêu đề viết hoa toàn bộ |
+| Website PDP | MOFU→BOFU | đủ 10 khối | tên chuẩn [Loại][Brand][Mã] | mua ngay/trả góp/tìm cửa hàng/hotline | dán bảng thông số model khác, thông số mâu thuẫn, tính năng không có trong CSDL |
+| Website Tin trúng thầu | TOFU→BOFU B2B | 400-800 từ | nêu ngay dự án/chủ đầu tư/vai trò | nhận tư vấn giải pháp / hồ sơ năng lực | emoji, giọng hô hào bán lẻ, thổi phồng vai trò |
+| Shopee/TikTok Shop/Lazada | BOFU | tên ≤120 ký tự, mô tả gạch đầu dòng | tên chứa từ khóa sàn + mã model | thêm giỏ/voucher/mua kèm | lệch giá so web chính hãng, ảnh model khác |
+| PR báo chí | TOFU | 600-1200 từ | góc tin tức, không quảng cáo trực tiếp | nhẹ, cuối bài | claim vượt Sổ Claims (PR hay vi phạm nhất), giọng bán hàng, "số 1" không nguồn |
+| Group NPP/Đại lý (kín) | Enablement→BOFU | ngắn, gạch đầu dòng | nêu ngay chính sách + thời hạn | tải bộ content / đăng ký | lộ nội dung nhóm kín ra public, chính sách hết hạn, thiếu mục ĐIỀU CẤM |
+
+QUY TẮC KÊNH: (1) Nếu kênh khai báo là TikTok/Facebook mà bài viết dài dòng kiểu blog, có meta title/description, hoặc thiếu hook mở đầu → trừ nặng và ghi rõ vào required_edits cách viết lại cho đúng kênh. (2) Nếu kênh là Website SEO Blog mà bài viết ngắn kiểu caption, thiếu meta/heading → tương tự. (3) Nếu bài BOFU (chốt đơn) đăng kênh TOFU thuần (PR báo chí) hoặc ngược lại → ghi cảnh báo sai bậc phễu-kênh.
+
 ## TÔNG GIỌNG (trừ điểm cau_truc nếu sai)
 - Sai tier: nhãn phổ thông viết giọng "đẳng cấp thượng lưu" hoặc ngược lại
 - Sai kênh: bài bán hàng đăng kênh brand, nội dung nội bộ NPP đăng public

@@ -4,11 +4,13 @@ import { useState } from 'react';
 import Nav from '../nav';
 import { CLAIMS, DISCLAIMER } from '@/lib/claims-data';
 import { REGULATIONS, CORE_GATES, VOICE_TIERS, JOURNEY_TONES, EVIDENCE, PRECEDENTS, SCORING } from '@/lib/rules-data';
+import { CHANNELS, JOURNEY_CHANNEL } from '@/lib/channel-standards';
 
 const SECTIONS = [
   { id: 'claims', label: '📜 Sổ Claims' },
   { id: 'phap-luat', label: '⚖️ Pháp luật' },
   { id: 'cong-chan', label: '⛔ Cổng chặn' },
+  { id: 'chuan-kenh', label: '📱 Chuẩn kênh' },
   { id: 'tong-giong', label: '🗣️ Tông giọng' },
   { id: 'bang-chung', label: '🔬 Bằng chứng' },
   { id: 'an-le', label: '📚 Án lệ duyệt' },
@@ -81,6 +83,54 @@ export default function Claims() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {sec === 'chuan-kenh' && (
+          <div className="space-y-4">
+            <p className="text-sm text-slate-500">Cùng một nội dung nhưng sai kênh vẫn bị trừ điểm nặng. AI chấm theo đúng bảng này.</p>
+            <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
+              <table className="w-full text-sm min-w-[720px]">
+                <thead><tr className="text-xs text-slate-400 text-left border-b border-slate-100">
+                  <th className="p-3">Bậc phễu</th><th className="p-3">Kênh HỢP</th><th className="p-3">Kênh KHÔNG hợp</th><th className="p-3">Lưu ý</th>
+                </tr></thead>
+                <tbody>
+                  {JOURNEY_CHANNEL.map(j => (
+                    <tr key={j.stage} className="border-b border-slate-50 align-top">
+                      <td className="p-3 font-semibold whitespace-nowrap">{j.stage}</td>
+                      <td className="p-3 text-green-700">{j.best}</td>
+                      <td className="p-3 text-red-600">{j.weak}</td>
+                      <td className="p-3 text-slate-600">{j.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {CHANNELS.map(c => (
+              <div key={c.channel} className="bg-white rounded-xl border border-slate-200 p-4">
+                <div className="flex items-center gap-2 flex-wrap mb-2">
+                  <h4 className="font-semibold text-slate-800">{c.channel}</h4>
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">{c.group}</span>
+                  <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">{c.journey}</span>
+                </div>
+                <div className="grid gap-1.5 text-sm md:grid-cols-2">
+                  <p><b>Độ dài:</b> <span className="text-slate-600">{c.length}</span></p>
+                  <p><b>Tông:</b> <span className="text-slate-600">{c.tone}</span></p>
+                  <p className="md:col-span-2"><b>Hook:</b> <span className="text-slate-600">{c.hook}</span></p>
+                  <p className="md:col-span-2"><b>CTA:</b> <span className="text-slate-600">{c.cta}</span></p>
+                </div>
+                <div className="grid gap-2 md:grid-cols-2 mt-3 text-xs">
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="font-semibold text-green-700 mb-1">✅ Bắt buộc có</p>
+                    <ul className="list-disc list-inside text-green-900 space-y-0.5">{c.must.map((x,i)=><li key={i}>{x}</li>)}</ul>
+                  </div>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="font-semibold text-red-700 mb-1">⛔ Tránh</p>
+                    <ul className="list-disc list-inside text-red-900 space-y-0.5">{c.avoid.map((x,i)=><li key={i}>{x}</li>)}</ul>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

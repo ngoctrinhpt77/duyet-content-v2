@@ -8,11 +8,28 @@ Tập đoàn Đại Việt: điện máy/gia dụng, 7 thương hiệu (cao cấ
 
 ## CHẤM THEO 5 TRỤC (mỗi trục 0-20, tổng 100)
 
-### 1. HÀNH TRÌNH KHÁCH HÀNG (journey) — 20đ
-- Mỗi model/nhóm chủ lực có đủ bậc TOFU → MOFU → BOFU chưa? Bậc "mồ côi" (chỉ có MOFU không có bài chốt/trust đỡ) → trừ điểm + liệt kê.
-- CÓ bài Retention (sau mua: thay lõi, bảo dưỡng, hướng dẫn dùng) và Referral (giới thiệu) không? Thiếu hoàn toàn = lỗi lớn với ngành máy lọc nước (sống nhờ thay lõi định kỳ) → trừ ≥8đ + đề xuất bài cụ thể nên thêm/đổi.
-- Campaign mùa vụ (Vu Lan, Tết, sale...) có đường dẫn từ bài cảm xúc TOFU sang bài chốt BOFU không?
-- Journey gán có đúng bản chất bài không (bài so sánh = MOFU, bài chứng nhận = BOFU trust, bài giáo dục = TOFU)?
+### 1. HÀNH TRÌNH KHÁCH HÀNG (journey) — 20đ — TRỤC QUAN TRỌNG NHẤT, soi kỹ nhất
+Chấm theo 6 tiêu chí, mỗi tiêu chí nêu rõ NHÓM/MODEL nào bị lỗi:
+
+(1.1) ĐỘ PHỦ PHỄU TỪNG MODEL: mỗi model/nhóm chủ lực phải có đủ TOFU → MOFU → BOFU. Liệt kê CỤ THỂ model nào thiếu bậc nào. Model chỉ có TOFU (khách biết nhưng không có gì dẫn tới mua) hoặc chỉ có BOFU (chốt mà chưa ai biết) đều là lỗi.
+
+(1.2) ĐƯỜNG DẪN CHUYỂN BẬC: bài TOFU có dẫn được sang bài MOFU/BOFU không (qua CTA, series, internal link)? Campaign mùa vụ (Vu Lan, Tết, Ngày vàng) mà chỉ có bài cảm xúc TOFU, không có bài chốt đơn đi kèm → lỗi lớn, ghi rõ.
+
+(1.3) TỶ LỆ PHỄU: đếm số bài mỗi bậc. Cân đối tham chiếu: TOFU 30-40%, MOFU 25-35%, BOFU 25-35%, Retention+Referral 10-15%. Lệch nhiều (vd 0% Retention, hoặc 70% TOFU) → trừ điểm + nêu con số thực tế đã đếm.
+
+(1.4) RETENTION & REFERRAL: BẮT BUỘC có với ngành máy lọc nước (sống nhờ thay lõi định kỳ) và ghế massage (bảo dưỡng). Thiếu hoàn toàn → trừ ≥8đ, đề xuất bài cụ thể nên thêm (vd "Dấu hiệu cần thay lõi", "Bảo dưỡng ghế sau 6 tháng", "Giới thiệu bạn bè nhận quà").
+
+(1.5) JOURNEY GÁN CÓ ĐÚNG BẢN CHẤT BÀI KHÔNG: bài so sánh = MOFU (không phải TOFU); bài chứng nhận/kiểm định = BOFU trust; bài giáo dục vấn đề = TOFU; bài giá/khuyến mãi = BOFU. Gán sai → nêu từng dòng.
+
+(1.6) KÊNH CÓ HỢP VỚI BẬC PHỄU KHÔNG (ma trận bắt buộc đối chiếu):
+| Bậc | Kênh HỢP | Kênh KHÔNG hợp | Ghi chú |
+|---|---|---|---|
+| TOFU | TikTok, Facebook, PR báo chí, SEO Blog | Shopee/Lazada, Zalo OA | giáo dục/cảm xúc, CTA mềm, KHÔNG chốt đơn |
+| MOFU | SEO Blog so sánh, Facebook, Zalo OA, YouTube | TikTok trend ngắn | so sánh model, chứng nhận, giải nghi ngại |
+| BOFU | PDP website, Shopee/TikTok Shop, Livestream, Group đại lý | PR báo chí | giá, khuyến mãi, bảo hành, CTA mua |
+| Retention | Zalo OA, Email, Blog hướng dẫn | PR, TikTok | thay lõi, bảo dưỡng, hướng dẫn dùng |
+| Referral | Zalo OA, Facebook, UGC/KOC | PR | ưu đãi giới thiệu, review thật |
+Nếu plan xếp bài BOFU (chốt đơn, giá) lên PR báo chí, hoặc bài TOFU giáo dục dài lên Shopee → nêu rõ dòng nào sai và đề xuất kênh đúng.
 
 ### 2. THÔNG TIN SẢN PHẨM (product) — 20đ
 - SOI KỸ NHẦM MODEL: nội dung/angle/hook/CTA của dòng này có nhắc model KHÁC với cột Model không (vd dòng gắn DN304 nhưng nội dung viết DN303, bài DT300 dán bảng DT400)? Đây là lỗi CHẶN → liệt kê từng dòng.
@@ -46,6 +63,8 @@ Tập đoàn Đại Việt: điện máy/gia dụng, 7 thương hiệu (cao cấ
 QUAN TRỌNG về cách cho điểm: điểm từng trục PHẢI phản ánh chất lượng thực của trục đó, KỂ CẢ khi plan có lỗi chặn. Lỗi chặn kéo decision về REWRITE nhưng KHÔNG kéo mọi trục về 0 — trục nào tốt vẫn chấm cao (vd hook hay → attractiveness 16-18 dù legal dính lỗi). Cấm cho 0 đồng loạt; 0/20 chỉ dành cho trục hoàn toàn không có giá trị gì.
 
 ## OUTPUT — TRẢ VỀ DUY NHẤT JSON:
-{"plan_title":"tên/mô tả ngắn plan","total_items":số dòng bài đếm được,"score":int 0-100,"decision":"PASS|MINOR_FIX|MAJOR_FIX|REWRITE","dimensions":{"journey":{"score":int 0-20,"issues":[str]},"product":{"score":int,"issues":[str]},"legal":{"score":int,"issues":[str]},"attractiveness":{"score":int,"issues":[str],"best_hook":str,"weakest_hook":str},"structure":{"score":int,"issues":[str]}},"blocking_issues":["lỗi chặn phải sửa trước khi cho viết — ghi rõ Ở DÒNG/NHÓM NÀO"],"recommendations":["đề xuất cụ thể, hành động được ngay"],"summary":"3-4 câu tổng kết cho Marketing Director"}
+{"plan_title":"tên/mô tả ngắn plan","total_items":số dòng bài đếm được,"score":int 0-100,"decision":"PASS|MINOR_FIX|MAJOR_FIX|REWRITE","dimensions":{"journey":{"score":int 0-20,"issues":[str],"phu_song":"vd: DN304 thiếu TOFU; Vu Lan chỉ có TOFU không có bài chốt","ty_le_phieu":"vd: TOFU 45% / MOFU 20% / BOFU 35% / Retention 0%","sai_kenh":[str]},"product":{"score":int,"issues":[str]},"legal":{"score":int,"issues":[str]},"attractiveness":{"score":int,"issues":[str],"best_hook":str,"weakest_hook":str},"structure":{"score":int,"issues":[str]}},"blocking_issues":["lỗi chặn phải sửa trước khi cho viết — ghi rõ Ở DÒNG/NHÓM NÀO"],"recommendations":["đề xuất cụ thể, hành động được ngay"],"summary":"3-4 câu tổng kết cho Marketing Director"}
+
+Với trục journey BẮT BUỘC điền đủ 3 trường phụ: phu_song (model/nhóm thiếu bậc nào), ty_le_phieu (đếm % thật từng bậc), sai_kenh (dòng nào xếp kênh không hợp bậc phễu — ghi rõ "nhóm X: bài BOFU đặt trên PR → nên chuyển sang PDP/Shopee").
 
 Nguyên tắc: chỉ ra lỗi phải kèm VỊ TRÍ (nhóm/model/dòng nào); đề xuất phải dùng được ngay; nghi ngờ pháp lý = chặt hơn.`;

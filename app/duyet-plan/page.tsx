@@ -30,16 +30,29 @@ const DECISIONS = {
 export default function DuyetPlan() {
   const [source, setSource] = useState('');
   const [writer, setWriter] = useState('');
+  const [file, setFile] = useState<{ name: string; mime: string; data: string; size: number } | null>(null);
+  const [drag, setDrag] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [r, setR] = useState<PlanReview | null>(null);
+
+  function pick(f: File) {
+    if (f.size > 15 * 1024 * 1024) { setError('File quá 15MB — hãy tách nhỏ hoặc dùng link Google Sheet.'); return; }
+    const r = new FileReader();
+    r.onload = () => {
+      const b64 = String(r.result).split(',')[1] ?? '';
+      setFile({ name: f.name, mime: f.type, data: b64, size: f.size });
+      setError('');
+    };
+    r.readAsDataURL(f);
+  }
 
   async function submit() {
     setLoading(true); setError(''); setR(null);
     try {
       const res = await fetch('/api/review-plan', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ source, writer }),
+        body: JSON.stringify({ source, writer, file: file ? { name: file.name, mime: file.mime, data: file.data } : undefined }),
       });
       const data = await res.json();
       if (!res.ok) setError(data.error ?? 'Có lỗi xảy ra');
@@ -61,18 +74,45 @@ export default function DuyetPlan() {
           {/* Input */}
           <section className="bg-white rounded-xl border border-slate-200 p-5 lg:col-span-2 h-fit">
             <label className="block mb-3">
-              <span className="text-sm text-slate-600">Link Google Sheet (đúng tab) hoặc dán bảng plan</span>
+              <span className="text-sm text-slate-600">Cách 1 — Dán link Google Sheet hoặc dán bảng plan</span>
               <textarea value={source} onChange={e => setSource(e.target.value)} rows={6}
                 placeholder={'https://docs.google.com/spreadsheets/d/...#gid=...\n\nhoặc copy & dán trực tiếp bảng plan vào đây'}
                 className="mt-1 w-full rounded-lg border border-slate-300 text-sm p-2 font-mono" />
               <span className="text-xs text-slate-400">Sheet phải mở quyền “Anyone with the link can view”. Link giữ nguyên #gid để đọc đúng tab.</span>
             </label>
+            <p className="text-xs text-slate-500 mb-2 font-medium">Cách 2 — Tải file lên</p>
+            <div
+              onDragOver={e => { e.preventDefault(); setDrag(true); }}
+              onDragLeave={() => setDrag(false)}
+              onDrop={e => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files?.[0]; if (f) pick(f); }}
+              className={`mb-4 rounded-lg border-2 border-dashed p-4 text-center transition ${drag ? 'border-[#1B4DB1] bg-blue-50' : 'border-slate-300 bg-slate-50'}`}
+            >
+              {file ? (
+                <div className="text-sm">
+                  <p className="font-medium text-slate-800">📎 {file.name}</p>
+                  <p className="text-xs text-slate-500">{(file.size / 1024).toFixed(0)} KB</p>
+                  <button onClick={() => setFile(null)} className="text-xs text-red-600 mt-1 underline">Bỏ file</button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-slate-600">Kéo thả file vào đây, hoặc</p>
+                  <label className="inline-block mt-1 text-sm font-semibold text-[#1B4DB1] cursor-pointer underline">
+                    chọn file từ máy
+                    <input type="file" className="hidden"
+                      accept=".xlsx,.xlsm,.xls,.csv,.tsv,.txt,.md,.docx,.pdf,image/*"
+                      onChange={e => { const f = e.target.files?.[0]; if (f) pick(f); }} />
+                  </label>
+                  <p className="text-xs text-slate-400 mt-1">Excel · CSV · Word · PDF · ảnh chụp bảng plan (tối đa 15MB)</p>
+                </>
+              )}
+            </div>
+
             <label className="block mb-4">
               <span className="text-sm text-slate-600">Người lập plan</span>
               <input value={writer} onChange={e => setWriter(e.target.value)} placeholder="VD: Nguyễn Thị Hoa"
                 className="mt-1 w-full rounded-lg border border-slate-300 text-sm p-2" />
             </label>
-            <button onClick={submit} disabled={loading || !source.trim()}
+            <button onClick={submit} disabled={loading || (!source.trim() && !file)}
               className="w-full rounded-lg bg-[#1B4DB1] text-white font-semibold py-3 hover:bg-[#163d8f] disabled:opacity-40 transition">
               {loading ? 'AI đang duyệt plan…' : '📅 Duyệt plan'}
             </button>

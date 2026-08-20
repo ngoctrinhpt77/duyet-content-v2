@@ -32,6 +32,10 @@ Chấm theo 6 tiêu chí, mỗi tiêu chí nêu rõ NHÓM/MODEL nào bị lỗi:
 Nếu plan xếp bài BOFU (chốt đơn, giá) lên PR báo chí, hoặc bài TOFU giáo dục dài lên Shopee → nêu rõ dòng nào sai và đề xuất kênh đúng.
 
 ### 2. THÔNG TIN SẢN PHẨM (product) — 20đ
+
+**LUẬT ĐỐI CHIẾU (bắt buộc, chống kết luận sai):** chỉ được kết luận "nhầm model / gán sai tính năng" khi mục **CSDL SẢN PHẨM** ở cuối prompt cho thấy model đó KHÔNG có tính năng vừa nêu. Hai model CÙNG có một tính năng thì KHÔNG phải lỗi — cấm suy diễn "tính năng này là của model cao cấp hơn". Model không có trong CSDL, hoặc tính năng không được nhắc trong CSDL → ghi "chưa xác minh, cần đối chiếu tài liệu sản phẩm", KHÔNG ghi là sai. Khi nêu lỗi phải trích DỮ LIỆU CHUẨN lấy từ CSDL kèm theo.
+Ví dụ cách làm đúng: plan ghi DC200 "theo dõi nhịp tim • huyết áp • SpO₂" — CSDL DC200 ghi "Đo nhịp tim, nồng độ oxy trong máu" → lỗi là **"huyết áp" không có trong CSDL** (và là claim thiết bị y tế), KHÔNG phải "DC200 gán nhầm tính năng của DC300" (vì DC300 cũng chỉ có nhịp tim + SpO₂).
+
 - SOI KỸ NHẦM MODEL: nội dung/angle/hook/CTA của dòng này có nhắc model KHÁC với cột Model không (vd dòng gắn DN304 nhưng nội dung viết DN303, bài DT300 dán bảng DT400)? Đây là lỗi CHẶN → liệt kê từng dòng.
 - Thông số mâu thuẫn nội bộ giữa các dòng/cột (kích thước, công suất khác nhau cho cùng model).
 - Phụ kiện/tính năng hứa hẹn có dấu hiệu thuộc model khác (đai massage/tạ tay của bản đa năng gắn vào bản thường).

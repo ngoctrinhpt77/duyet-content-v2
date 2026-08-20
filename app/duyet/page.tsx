@@ -184,10 +184,12 @@ export default function Duyet() {
                 {/* ---- trạng thái + badges ---- */}
                 <div className="flex items-center gap-1.5 flex-wrap mt-1.5 text-xs">
                   {r.gate_status
-                    ? <span className={`px-2 py-0.5 rounded font-bold ${GATE_CLS[r.gate_status]}`}>{GATE_DOT[r.gate_status]} {r.gate_status}</span>
+                    ? <span title="Cổng chặn: dữ liệu sản phẩm · pháp lý · đúng bậc hành trình · đủ sức chuyển đổi"
+                        className={`px-2 py-0.5 rounded font-bold ${GATE_CLS[r.gate_status]}`}>{GATE_DOT[r.gate_status]} GATE {r.gate_status}</span>
                     : <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-500">chưa qua Gate</span>}
-                  <span className={`px-2 py-0.5 rounded font-semibold ${DECISION_CLS[r.decision ?? ''] ?? 'bg-slate-100'}`}>
-                    {r.score}/100 · {r.decision}
+                  <span title="Điểm biên tập theo rubric 100đ (cấu trúc, lợi ích, trust, CTA, SEO) — khác với cổng chặn"
+                    className={`px-2 py-0.5 rounded font-semibold ${DECISION_CLS[r.decision ?? ''] ?? 'bg-slate-100'}`}>
+                    ✍️ {r.score}/100 · {r.decision}
                   </span>
                   {badges.map((b, i) => <span key={i} className={`px-2 py-0.5 rounded font-medium ${b.cls}`}>{b.text}</span>)}
                   {r.declared_journey && <span className="px-2 py-0.5 rounded bg-purple-50 text-purple-700">{r.declared_journey}</span>}
@@ -222,6 +224,10 @@ export default function Duyet() {
                     </p>
                     {top.map((it, i) => <IssueLine key={i} it={it} compact />)}
                   </div>
+                ) : issues.length > 0 ? (
+                  <p className="mt-2 text-xs text-slate-600">
+                    Không có lỗi chặn — còn <b>{issues.length}</b> điểm biên tập mức nhẹ hơn (xem phân tích chi tiết).
+                  </p>
                 ) : (
                   <p className="mt-2 text-xs text-green-600">Không có lỗi chặn — kiểm tra nhanh rồi duyệt.</p>
                 )}

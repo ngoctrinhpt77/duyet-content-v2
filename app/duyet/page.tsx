@@ -65,7 +65,11 @@ export default function Duyet() {
             className="rounded-lg border border-slate-300 text-sm p-2 w-56" />
         </div>
 
-        {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
+        {/fetch failed|ENOTFOUND|timeout/i.test(error) ? (
+          <div className="bg-orange-50 border border-orange-300 rounded-lg p-4 text-sm text-orange-800 mb-3">
+            🔌 <b>Database đang tạm dừng</b> — vào supabase.com → project → bấm <b>Restore</b>, chờ ~2 phút rồi tải lại.
+          </div>
+        ) : error && <p className="text-red-600 text-sm mb-3">{error}</p>}
         {loading && <p className="text-slate-400 text-sm">Đang tải…</p>}
         {!loading && rows.length === 0 && !error && (
           <p className="text-slate-400 text-sm">Trống — chưa có bài nào ở trạng thái này.</p>

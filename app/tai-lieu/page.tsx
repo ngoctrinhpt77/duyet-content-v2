@@ -53,6 +53,7 @@ export default function TaiLieu() {
   }
 
   const missingTable = error.includes('mos_product_notes');
+  const dbDown = /fetch failed|ENOTFOUND|ECONNREFUSED|timeout/i.test(error);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -71,7 +72,12 @@ export default function TaiLieu() {
             ⚠️ Chưa tạo bảng ghi chú. Mở Supabase → SQL Editor → chạy file <code className="bg-amber-100 px-1 rounded">supabase-setup-2.sql</code> trong thư mục app (1 phút) rồi tải lại trang.
           </div>
         )}
-        {error && !missingTable && <p className="text-red-600 text-sm mb-3">{error}</p>}
+        {dbDown && !missingTable && (
+          <div className="bg-orange-50 border border-orange-300 rounded-lg p-4 text-sm text-orange-800 mb-4">
+            🔌 <b>Database đang tạm dừng</b> (Supabase free tier tự pause khi lâu không dùng). Cách khắc phục: vào <b>supabase.com</b> → mở project → bấm <b>Restore/Resume</b> → chờ ~2 phút → tải lại trang. AI chấm bài vẫn hoạt động bình thường, chỉ phần lưu/đọc dữ liệu tạm gián đoạn.
+          </div>
+        )}
+        {error && !missingTable && !dbDown && <p className="text-red-600 text-sm mb-3">{error}</p>}
 
         {showForm && (
           <div className="bg-white rounded-xl border border-slate-200 p-4 mb-5 grid gap-3 md:grid-cols-2">

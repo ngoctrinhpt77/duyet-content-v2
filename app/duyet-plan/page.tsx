@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Nav from '../nav';
+import { healthFromItems, type PlanItem } from '@/lib/review-view';
 
 type Dim = { score: number; issues: string[]; best_hook?: string; weakest_hook?: string; phu_song?: string; ty_le_phieu?: string; sai_kenh?: string[] };
 type PlanReview = {
@@ -9,7 +10,12 @@ type PlanReview = {
   decision: 'PASS' | 'MINOR_FIX' | 'MAJOR_FIX' | 'REWRITE';
   dimensions: { journey: Dim; product: Dim; legal: Dim; attractiveness: Dim; structure: Dim };
   blocking_issues: string[]; recommendations: string[]; summary: string;
-  saved?: boolean; db_error?: string;
+  items?: PlanItem[]; plan_issues?: string[];
+  saved?: boolean; db_error?: string; submission_id?: string | null;
+};
+
+const GATE_CLS: Record<string, string> = {
+  PASS: 'bg-green-100 text-green-700', WARN: 'bg-yellow-100 text-yellow-700', FAIL: 'bg-red-100 text-red-700',
 };
 
 const DIM_LABEL: Record<string, string> = {
@@ -35,6 +41,8 @@ export default function DuyetPlan() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [r, setR] = useState<PlanReview | null>(null);
+  const [detail, setDetail] = useState(false);
+  const [openRow, setOpenRow] = useState<number | null>(null);
 
   function pick(f: File) {
     if (f.size > 15 * 1024 * 1024) { setError('File quá 15MB — hãy tách nhỏ hoặc dùng link Google Sheet.'); return; }
@@ -144,10 +152,44 @@ export default function DuyetPlan() {
                     </span>
                     <span className="text-xs text-slate-400">{r.plan_title} · {r.total_items} bài</span>
                   </div>
-                  <p className="text-sm text-slate-600 mt-3">{r.summary}</p>
+                  {detail && <p className="text-sm text-slate-600 mt-3">{r.summary}</p>}
                   {r.saved === true && <p className="text-xs text-green-600 mt-2">💾 Đã lưu — xem trong Hàng chờ (kênh: Content Plan).</p>}
                   {r.saved === false && <p className="text-xs text-orange-500 mt-2">⚠️ Chưa lưu được DB ({r.db_error ?? 'DB đang gián đoạn'}) — kết quả vẫn dùng được.</p>}
                 </div>
+
+                {(() => {
+                  const health = healthFromItems(r.items ?? []);
+                  if (!health) return null;
+                  const M = (label: string, v?: number, cls = 'text-slate-700') =>
+                    v == null ? null : <div key={label} className="min-w-[5.5rem]"><p className="text-slate-400">{label}</p><p className={`font-bold ${cls}`}>{v}</p></div>;
+                  return (
+                    <div className="bg-white rounded-xl border border-slate-200 p-4">
+                      <h3 className="text-[11px] font-bold text-slate-500 tracking-wide mb-2">PLAN HEALTH</h3>
+                      <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs">
+                        {M('Tổng bài', health.total)}
+                        {M('PASS', health.pass, 'text-green-600')}
+                        {M('WARN', health.warn, 'text-yellow-600')}
+                        {M('FAIL', health.fail, 'text-red-600')}
+                        {M('Awareness', health.awareness)}
+                        {M('Consideration', health.consideration)}
+                        {M('Conversion', health.conversion)}
+                        {M('Retention', health.retention)}
+                      </div>
+                      {r.dimensions?.journey?.ty_le_phieu && (
+                        <p className="text-xs text-slate-500 mt-2">📊 {r.dimensions.journey.ty_le_phieu}</p>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {(r.plan_issues?.length ?? 0) > 0 && (
+                  <div className="bg-white rounded-xl border border-slate-200 p-4">
+                    <h3 className="text-[11px] font-bold text-slate-500 tracking-wide mb-2">VẤN ĐỀ CẤP PLAN</h3>
+                    <ul className="text-sm text-slate-700 space-y-1">
+                      {r.plan_issues!.slice(0, 5).map((p, i) => <li key={i}>• {p}</li>)}
+                    </ul>
+                  </div>
+                )}
 
                 {(r.blocking_issues?.length ?? 0) > 0 && (
                   <div className="border border-red-300 bg-red-50 rounded-xl p-4">
@@ -158,6 +200,53 @@ export default function DuyetPlan() {
                   </div>
                 )}
 
+                {(r.items?.length ?? 0) > 0 && (
+                  <div className="bg-white rounded-xl border border-slate-200 p-4">
+                    <h3 className="text-[11px] font-bold text-slate-500 tracking-wide mb-2">TỪNG BÀI TRONG PLAN ({r.items!.length}) — bấm dòng để xem đủ</h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead className="text-slate-500">
+                          <tr className="border-b border-slate-200">
+                            <th className="text-left py-1 pr-2 font-medium w-8">#</th>
+                            <th className="text-left py-1 pr-2 font-medium">Topic</th>
+                            <th className="text-left py-1 pr-2 font-medium">Model</th>
+                            <th className="text-left py-1 pr-2 font-medium">Journey</th>
+                            <th className="text-left py-1 pr-2 font-medium">Gate</th>
+                            <th className="text-left py-1 pr-2 font-medium">Điểm</th>
+                            <th className="text-left py-1 font-medium">Vấn đề</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {r.items!.map((it, i) => {
+                            const g = (it.gate ?? '').toUpperCase();
+                            const openR = openRow === i;
+                            return (
+                              <tr key={i} onClick={() => setOpenRow(openR ? null : i)}
+                                className="border-b border-slate-50 hover:bg-slate-50 cursor-pointer align-top">
+                                <td className="py-1 pr-2 text-slate-400">{it.no ?? i + 1}</td>
+                                <td className="py-1 pr-2 text-slate-800">{it.topic}</td>
+                                <td className="py-1 pr-2 text-slate-600">{it.product}</td>
+                                <td className="py-1 pr-2 text-slate-600">{it.journey}</td>
+                                <td className="py-1 pr-2">{GATE_CLS[g] && <span className={`px-1.5 py-0.5 rounded ${GATE_CLS[g]}`}>{g}</span>}</td>
+                                <td className="py-1 pr-2 text-slate-600">{it.score ?? ''}</td>
+                                <td className={`py-1 text-slate-600 ${openR ? '' : 'truncate max-w-[16rem]'}`}>
+                                  {it.issue}
+                                  {openR && it.channel && <span className="block text-slate-400">Kênh: {it.channel}</span>}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                <button onClick={() => setDetail(d => !d)} className="text-sm text-[#1B4DB1] font-medium">
+                  {detail ? '▲ Ẩn phân tích chi tiết' : '▼ Xem phân tích chi tiết (5 trục chấm điểm, đề xuất)'}
+                </button>
+
+                {detail && (
                 <div className="grid gap-3 md:grid-cols-2">
                   {Object.entries(r.dimensions ?? {}).map(([k, d]) => (
                     <div key={k} className="bg-white rounded-xl border border-slate-200 p-4">
@@ -194,8 +283,9 @@ export default function DuyetPlan() {
                     </div>
                   ))}
                 </div>
+                )}
 
-                {(r.recommendations?.length ?? 0) > 0 && (
+                {detail && (r.recommendations?.length ?? 0) > 0 && (
                   <div className="bg-white rounded-xl border border-slate-200 p-4">
                     <h3 className="font-semibold text-sm text-slate-700 mb-2">💡 Đề xuất hành động</h3>
                     <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">

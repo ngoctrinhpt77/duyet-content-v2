@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Nav from './nav';
 
 const BRANDS = ['Daikiosan', 'Makano', 'Daikio', 'Nakami', 'Takasa', 'Kasuto', 'Achisa'];
@@ -67,10 +67,35 @@ export default function Home() {
   const [objective, setObjective] = useState(OBJECTIVES[0]);
   const [audience, setAudience] = useState('');
   const [exceptionReason, setExceptionReason] = useState('');
+  const [parentId, setParentId] = useState<string | null>(null);
+  const [parentInfo, setParentInfo] = useState<string>('');
   const [showDetail, setShowDetail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<Review | null>(null);
+
+  // Nop BAN SUA: /?parent=<id> — nap lai bai cu de Director xem duoc diff sau khi cham
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('parent');
+    if (!id) return;
+    (async () => {
+      try {
+        const res = await fetch(`/api/submissions?id=${id}`);
+        const d = await res.json();
+        const p = Array.isArray(d) ? d[0] : null;
+        if (!p) return;
+        setParentId(id);
+        setContent(p.content ?? '');
+        if (p.channel) setChannel(p.channel);
+        if (p.brand) setBrand(p.brand);
+        if (p.writer) setWriter(p.writer);
+        if (p.declared_journey) setJourney(p.declared_journey);
+        if (p.objective) setObjective(p.objective);
+        if (p.audience) setAudience(p.audience);
+        setParentInfo(`v${(p.version ?? 1) + 1} — bản sửa của bài ${p.writer} nộp ${new Date(p.created_at).toLocaleString('vi-VN')}`);
+      } catch { /* bo qua */ }
+    })();
+  }, []);
 
   async function requestException() {
     setLoading(true);
@@ -78,7 +103,7 @@ export default function Home() {
       const res = await fetch('/api/review', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content, channel, brand, writer,
-          declared_journey: journey, objective, audience, override_requested: exceptionReason }),
+          declared_journey: journey, objective, audience, override_requested: exceptionReason, parent_id: parentId }),
       });
       const d = await res.json();
       if (res.ok) { setResult(d); setExceptionReason(''); }
@@ -93,7 +118,7 @@ export default function Home() {
       const res = await fetch('/api/review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, channel, brand, writer, declared_journey: journey, objective, audience }),
+        body: JSON.stringify({ content, channel, brand, writer, declared_journey: journey, objective, audience, parent_id: parentId }),
       });
       const data = await res.json();
       if (!res.ok) setError(data.error ?? 'Có lỗi xảy ra');
@@ -113,6 +138,11 @@ export default function Home() {
         {/* Form nộp bài */}
         <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
           <h2 className="font-semibold text-lg mb-4 text-slate-800">Nộp bài duyệt</h2>
+          {parentInfo && (
+            <p className="mb-3 text-xs bg-blue-50 border border-blue-200 text-blue-800 rounded-lg px-2.5 py-1.5">
+              ✏️ {parentInfo} — Director sẽ xem được phần đã thay đổi thay vì đọc lại toàn bài.
+            </p>
+          )}
           <div className="grid grid-cols-2 gap-3 mb-3">
             <label className="block">
               <span className="text-sm text-slate-600">Kênh đăng</span>

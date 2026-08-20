@@ -41,6 +41,15 @@ export const EVIDENCE = [
     strength: 'Trung bình–yếu: tiến cứu 134 người, 2 tháng, KHÔNG nhóm chứng',
     allowed: 'Một nghiên cứu trên 134 người ghi nhận XU HƯỚNG giảm chỉ số đường/mỡ máu/acid uric sau 2 tháng — bắt buộc kèm "kết quả tham khảo, không thay thế chẩn đoán/điều trị y tế"',
     banned: 'Chữa tiểu đường / mỡ máu / gout; dùng % làm cam kết; gán cho model cụ thể khi chưa xác minh thiết bị nghiên cứu là máy Đại Việt',
+    source: 'https://tapchiyhcd.vn/index.php/yhcd/article/view/2525',
+  },
+  {
+    id: 'EV-002', type: 'Kỷ lục quốc gia',
+    title: 'Kỷ lục Việt Nam (VietKings) — xác lập ngày 27/05/2024 cho 2 dòng máy Daikiosan & Makano',
+    strength: 'Mạnh cho claim TIÊN PHONG (có tổ chức xác lập, ngày rõ) — KHÔNG phải bằng chứng về chất lượng hay công dụng',
+    allowed: 'Trích NGUYÊN VĂN nội dung kỷ lục: "Đơn vị đầu tiên sản xuất các dòng máy lọc nước Ion kiềm tươi (gồm Daikiosan và Makano), áp dụng công nghệ độc quyền điện phân nước bằng điện cực tan Magie và tích hợp nhiều công nghệ hiện đại nhất" — bắt buộc ghi kèm "Tổ chức Kỷ lục Việt Nam (VietKings) xác lập ngày 27/05/2024"',
+    banned: 'Rút gọn thành "máy lọc nước số 1/tốt nhất Việt Nam"; suy diễn kỷ lục = chất lượng nước tốt nhất hay công dụng vượt trội; dùng cho model/ngành hàng KHÁC (ghế massage, chống giật, gia dụng); bỏ tên tổ chức hoặc năm xác lập',
+    source: 'https://kyluc.vn/tin-tuc/ky-luc/hai-dong-may-loc-nuoc-ion-kiem-tuoi-cua-tap-doan-dai-viet-lap-ky-luc-voi-cong-nghe-doc-quyen-va-hien-dai',
   },
 ];
 

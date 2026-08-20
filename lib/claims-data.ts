@@ -21,6 +21,7 @@ export const CLAIMS: Claim[] = [
   { code: 'SUP-01', group: 'Tuyên bố tối cao', allowed: '"Thương hiệu máy lọc nước ion kiềm duy nhất tại VN được cấp bằng độc quyền công nghệ điện phân Magie"', banned: 'Dùng không kèm trích dẫn', evidence: 'Bằng độc quyền (chờ số hiệu)', note: 'BẮT BUỘC trích số bằng + cơ quan + ngày cấp', status: 'cho_so_hieu' },
   { code: 'SUP-02', group: 'Tuyên bố tối cao', allowed: '"Top 500 DN tư nhân lớn nhất VN (VNR500)"', banned: 'Dùng không ghi năm', evidence: 'Vietnam Report', note: 'Ghi năm xếp hạng', status: 'co_bang_chung' },
   { code: 'SUP-03', group: 'Tuyên bố tối cao', allowed: 'Giải "Máy lọc nước ion kiềm được yêu thích nhất" Tech Awards', banned: 'Dùng không ghi năm/đơn vị trao', evidence: 'Tech Awards', note: 'Ghi năm + đơn vị trao', status: 'co_bang_chung' },
+  { code: 'SUP-04', group: 'Tuyên bố tối cao', allowed: '"Đơn vị đầu tiên sản xuất các dòng máy lọc nước ion kiềm tươi (Daikiosan và Makano) áp dụng công nghệ độc quyền điện phân nước bằng điện cực tan Magie" — Kỷ lục Việt Nam', banned: 'Rút gọn thành "máy lọc nước số 1/tốt nhất VN"; suy diễn thành chất lượng/công dụng vượt trội; dùng cho ngành hàng khác (ghế massage, chống giật, gia dụng)', evidence: 'EV-002 — Tổ chức Kỷ lục Việt Nam (VietKings), xác lập 27/05/2024', note: 'BẮT BUỘC ghi kèm tên tổ chức + ngày xác lập. Chỉ áp dụng cho máy lọc nước ion kiềm tươi Daikiosan/Makano', status: 'co_bang_chung' },
 ];
 
 export const DISCLAIMER = 'Sản phẩm hỗ trợ chăm sóc sức khỏe, không thay thế tư vấn hoặc điều trị y tế.';

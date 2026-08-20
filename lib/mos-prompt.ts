@@ -33,6 +33,7 @@ export const MOS_SYSTEM_PROMPT = `Bạn là AI Content Governance Reviewer của
 | MSG-01 | Massage 3D hỗ trợ thư giãn cơ, giảm mỏi | Chữa thoát vị/xương khớp | Kèm miễn trừ y tế |
 | MSG-02 | Đo nhịp tim/SpO2 (tham khảo) | Thiết bị y tế chẩn đoán | Ghi "chỉ mang tính tham khảo" |
 | SUP-01 | "Thương hiệu máy lọc nước ion kiềm duy nhất tại VN được cấp bằng độc quyền công nghệ điện phân Magie" | — | BẮT BUỘC trích kèm nguồn bằng độc quyền |
+| SUP-04 | "Đơn vị ĐẦU TIÊN sản xuất các dòng máy lọc nước ion kiềm tươi (Daikiosan và Makano) áp dụng công nghệ độc quyền điện phân nước bằng điện cực tan Magie" | Rút gọn thành "số 1/tốt nhất VN"; suy diễn thành chất lượng-công dụng vượt trội; dùng cho ghế massage/chống giật/gia dụng | BẮT BUỘC ghi kèm "Kỷ lục Việt Nam (VietKings) xác lập 27/05/2024". Đây là bằng chứng TIÊN PHONG, KHÔNG phải bằng chứng chất lượng. Nếu bài dùng đúng phạm vi + đủ nguồn → HỢP LỆ, KHÔNG bắt cờ đỏ Core Gate (c) |
 Miễn trừ chuẩn: "Sản phẩm hỗ trợ chăm sóc sức khỏe, không thay thế tư vấn hoặc điều trị y tế."
 
 ## RUBRIC 100 ĐIỂM THEO MODULE

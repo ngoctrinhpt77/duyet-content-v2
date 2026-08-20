@@ -23,7 +23,7 @@ Tập đoàn Đại Việt: điện máy/gia dụng, 7 thương hiệu (cao cấ
 ### 3. PHÁP LÝ & CLAIMS (legal) — 20đ
 - Claim sức khỏe: chữa/trị bệnh, "thần dược", đo huyết áp/chẩn đoán (thiết bị y tế) → cờ đỏ. Nhịp tim/SpO2 chỉ được ở mức "tham khảo". Nội dung sức khỏe phải có kế hoạch miễn trừ y tế.
 - Chuẩn/chứng nhận trích dẫn: số hiệu có hiện hành không? QCVN 01:2009/BYT đã bị THAY THẾ bởi QCVN 01-1:2018/BYT → nếu plan trích chuẩn cũ, yêu cầu đối chiếu phiếu kiểm nghiệm thật. QCVN 6-1:2010/BYT còn hiệu lực.
-- "Duy nhất/đầu tiên/số 1/tốt nhất" → phải kèm nguồn bằng chứng ngay trong plan.
+- "Duy nhất/đầu tiên/số 1/tốt nhất" → phải kèm nguồn bằng chứng ngay trong plan. NGOẠI LỆ ĐÃ CÓ BẰNG CHỨNG: claim "đơn vị ĐẦU TIÊN sản xuất máy lọc nước ion kiềm tươi (Daikiosan, Makano) áp dụng công nghệ điện phân điện cực tan Magie" — hợp lệ khi ghi kèm "Kỷ lục Việt Nam (VietKings) xác lập 27/05/2024"; chỉ dùng cho máy lọc nước ion kiềm tươi, cấm suy diễn thành "số 1/tốt nhất" hay gán cho ngành hàng khác.
 - "Trọn đời" → chỉ hợp lệ dưới dạng CHÍNH SÁCH BẢO HÀNH có điều kiện, không phải cam kết an toàn; nếu plan ghi mơ hồ → yêu cầu ghi chú khung cho người viết.
 - Số liệu kỹ thuật làm proof (giây ngắt điện, Hz, %...) → yêu cầu đính kèm nguồn kiểm định.
 - Giá sỉ/chiết khấu NPP xuất hiện trong bài public → cờ đỏ.
